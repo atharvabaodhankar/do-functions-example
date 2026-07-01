@@ -10,10 +10,12 @@ packages:
         - name: hello
           binary: false
           main: ""
-          runtime: nodejs:default
+          runtime: nodejs:22
           web: true
           webSecure: false
           parameters: {}
           environment: {}
           annotations: {}
-          limits: {}
+          limits:
+            memory: 512
+            timeout: 30000
