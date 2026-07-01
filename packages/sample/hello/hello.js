@@ -1,6 +1,15 @@
 function main(args) {
-    let name = args.name || 'stranger'
-    let greeting = 'Hello ' + name + '!'
-    console.log(greeting)
-    return {"body": greeting}
+
+    return {
+        statusCode: 200,
+        body: {
+            project: "Cloud Image Optimizer",
+            author: "Atharva",
+            message: "My first DigitalOcean Function 🚀",
+            timestamp: new Date().toISOString()
+        }
+    };
+
 }
+
+exports.main = main;
