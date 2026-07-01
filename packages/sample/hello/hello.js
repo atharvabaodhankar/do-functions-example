@@ -1,17 +1,17 @@
 function main(args) {
+    const name = args.name || "Guest";
+    const project = args.project || "Image Optimizer";
+
     return {
         statusCode: 200,
         headers: {
             "Content-Type": "application/json"
         },
         body: {
-            service: "Image Optimizer",
-            version: "1.0.0",
-            language: "Node.js",
+            message: `Hello, ${name}! 👋`,
+            project: project,
             runtime: "DigitalOcean Functions",
-            uptime: "Serverless",
             status: "Ready",
-            author: "Atharva",
             timestamp: new Date().toISOString()
         }
     };
