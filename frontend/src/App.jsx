@@ -16,7 +16,7 @@ import {
   Maximize2
 } from "lucide-react";
 
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = "https://faas-blr1-8177d592.doserverless.co/api/v1/web/fn-f72bafd1-18fd-4e5b-9d68-721b5dc7cae6";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
@@ -47,7 +47,7 @@ function App() {
 
   const fetchUser = async () => {
     try {
-      const res = await fetch(`${API_BASE}/auth/me`, {
+      const res = await fetch(`${API_BASE}/user/profile`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -64,7 +64,7 @@ function App() {
   const fetchImages = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/images`, {
+      const res = await fetch(`${API_BASE}/image/list`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -115,7 +115,7 @@ function App() {
 
     try {
       // 1. Get presigned URL
-      const presignRes = await fetch(`${API_BASE}/uploads/presign`, {
+      const presignRes = await fetch(`${API_BASE}/image/presign`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -145,7 +145,7 @@ function App() {
 
       // 3. Trigger completion and start background processing
       setUploadProgress("Starting optimization pipelines...");
-      const completeRes = await fetch(`${API_BASE}/uploads/complete`, {
+      const completeRes = await fetch(`${API_BASE}/image/complete`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -179,7 +179,7 @@ function App() {
   const pollImageStatus = async (imageId) => {
     const interval = setInterval(async () => {
       try {
-        const res = await fetch(`${API_BASE}/images/${imageId}`, {
+        const res = await fetch(`${API_BASE}/image/list?id=${imageId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();
@@ -204,7 +204,7 @@ function App() {
     if (e) e.stopPropagation();
     if (!confirm("Are you sure you want to delete this image and all optimized variants?")) return;
     try {
-      const res = await fetch(`${API_BASE}/images/${id}`, {
+      const res = await fetch(`${API_BASE}/image/delete?id=${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -416,7 +416,7 @@ function App() {
                   onClick={async () => {
                     // Fetch full detail when clicked
                     try {
-                      const res = await fetch(`${API_BASE}/images/${img.id}`, {
+                      const res = await fetch(`${API_BASE}/image/list?id=${img.id}`, {
                         headers: { Authorization: `Bearer ${token}` }
                       });
                       const data = await res.json();

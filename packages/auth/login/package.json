@@ -9,6 +9,6 @@
     "prisma": "^5.16.1"
   },
   "scripts": {
-    "postinstall": "prisma generate --schema=schema.prisma"
+    "postinstall": "prisma generate --schema=schema.prisma && rm -rf node_modules/prisma node_modules/@prisma/engines"
   }
 }
