@@ -73,7 +73,9 @@ packages:
           parameters: {}
           environment: {}
           annotations: {}
-          limits: {}
+          limits:
+            memory: 1024
+            timeout: 60000
         - name: optimize
           binary: false
           main: ""
