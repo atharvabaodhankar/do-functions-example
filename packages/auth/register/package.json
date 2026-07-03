@@ -9,6 +9,6 @@
     "prisma": "^5.16.1"
   },
   "scripts": {
-    "postinstall": "prisma generate --schema=../lib/db/schema.prisma"
+    "postinstall": "prisma generate --schema=schema.prisma"
   }
 }
