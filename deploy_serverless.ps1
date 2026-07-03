@@ -1,12 +1,7 @@
-$prismaActions = @(
-    "auth/register",
-    "auth/login",
-    "image/complete",
-    "image/optimize",
-    "image/list",
-    "image/delete",
-    "user/profile"
-)
+# deploy_serverless.ps1
+# Clean deploy script — wipes ALL node_modules before each deploy
+# so the upload ZIP stays under the 48MB limit.
+# .deployignore handles frontend/ exclusion automatically.
 
 $allActions = @(
     "auth/register",
@@ -22,44 +17,44 @@ $allActions = @(
     "user/profile"
 )
 
-# 1. Rename package.json to package.json.bak for Prisma actions
-foreach ($action in $prismaActions) {
-    $folder = "packages/$action"
-    if (Test-Path "$folder\package.json") {
-        Rename-Item -Path "$folder\package.json" -NewName "package.json.bak" -Force
-        
-        # Prune Windows engine to save upload bandwidth and avoid zip bloat
-        Remove-Item -Force "$folder\node_modules\@prisma\client\query-engine-windows.exe" -ErrorAction SilentlyContinue
+# Load env variables from .env
+Get-Content .env | ForEach-Object {
+    if ($_ -match '^\s*([^#][^=]+)=(.*)$') {
+        [System.Environment]::SetEnvironmentVariable($matches[1].Trim(), $matches[2].Trim(), 'Process')
     }
 }
 
-try {
-    # 2. Load env variables
-    Get-Content .env | ForEach-Object { if ($_ -match '^\s*([^#][^=]+)=(.*)$') { [System.Environment]::SetEnvironmentVariable($matches[1].Trim(), $matches[2].Trim(), 'Process') } }
+# Wipe ALL package node_modules and deployer zips before starting
+Write-Host "Cleaning all node_modules and deployer artifacts..."
+Get-ChildItem "packages" -Recurse -Directory -Filter "node_modules" |
+    Where-Object { $_.FullName -notmatch "node_modules\\node_modules" } |
+    ForEach-Object { Remove-Item $_.FullName -Recurse -Force -ErrorAction SilentlyContinue }
+Get-ChildItem "." -Recurse -Filter "__deployer__.zip" | Remove-Item -Force -ErrorAction SilentlyContinue
+Write-Host "Clean done."
 
-    # 3. Deploy functions one-by-one to avoid the 48MB payload limit
-    foreach ($action in $allActions) {
-        Write-Host "----------------------------------------"
-        Write-Host "Deploying function: $action"
-        Write-Host "----------------------------------------"
-        
-        # If it is a non-Prisma function, we might want remote build for platform modules (like sharp/axios)
-        if ($prismaActions -contains $action) {
-            # Prisma actions deploy with local prebuilt client
-            doctl serverless deploy . --include $action
-        } else {
-            # Non-Prisma actions deploy with remote build
-            doctl serverless deploy . --include $action --remote-build
-        }
+# Deploy each function one-by-one (remote build handles npm install)
+$failed = @()
+foreach ($action in $allActions) {
+    Write-Host ""
+    Write-Host "========================================"
+    Write-Host " Deploying: $action"
+    Write-Host "========================================"
+
+    doctl serverless deploy . --include $action
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "FAILED: $action" -ForegroundColor Red
+        $failed += $action
+    } else {
+        Write-Host "OK: $action" -ForegroundColor Green
     }
+
+    # Clean up deployer zip left by doctl
+    Get-ChildItem "." -Recurse -Filter "__deployer__.zip" | Remove-Item -Force -ErrorAction SilentlyContinue
 }
-finally {
-    # 4. Restore package.json files
-    foreach ($action in $prismaActions) {
-        $folder = "packages/$action"
-        if (Test-Path "$folder\package.json.bak") {
-            Rename-Item -Path "$folder\package.json.bak" -NewName "package.json" -Force
-        }
-    }
-    Write-Host "Restored package.json files."
+
+Write-Host ""
+if ($failed.Count -eq 0) {
+    Write-Host "All functions deployed successfully!" -ForegroundColor Green
+} else {
+    Write-Host "Failed functions: $($failed -join ', ')" -ForegroundColor Red
 }
