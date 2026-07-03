@@ -1,8 +1,8 @@
 const { DeleteObjectCommand } = require("@aws-sdk/client-s3");
-const prisma = require("../lib/db/prisma");
-const { s3Client } = require("../lib/spaces");
-const { getAuthUser } = require("../lib/jwt");
-const { send } = require("../lib/response");
+const prisma = require("./lib/db/prisma");
+const { s3Client } = require("./lib/spaces");
+const { getAuthUser } = require("./lib/jwt");
+const { send } = require("./lib/response");
 
 async function main(args) {
   try {
@@ -56,3 +56,4 @@ async function main(args) {
 }
 
 exports.main = main;
+

@@ -1,6 +1,6 @@
-const prisma = require("../lib/db/prisma");
-const { getAuthUser } = require("../lib/jwt");
-const { send } = require("../lib/response");
+const prisma = require("./lib/db/prisma");
+const { getAuthUser } = require("./lib/jwt");
+const { send } = require("./lib/response");
 
 function getPublicUrl(key) {
   const bucket = process.env.SPACES_BUCKET;
@@ -13,6 +13,42 @@ async function main(args) {
     const user = getAuthUser(args);
     if (!user) {
       return send(401, { success: false, error: "Unauthorized access" });
+    }
+
+    const id = args.id || args.imageId;
+
+    if (id) {
+      const image = await prisma.image.findFirst({
+        where: { id, userId: user.id },
+        include: { jobs: { orderBy: { startedAt: "desc" } } }
+      });
+
+      if (!image) {
+        return send(404, { success: false, error: "Image not found" });
+      }
+
+      return send(200, {
+        success: true,
+        image: {
+          id: image.id,
+          status: image.status,
+          mimeType: image.mimeType,
+          extension: image.extension,
+          width: image.width,
+          height: image.height,
+          originalSize: image.originalSize,
+          optimizedSize: image.optimizedSize,
+          createdAt: image.createdAt,
+          jobs: image.jobs,
+          urls: {
+            original: getPublicUrl(image.originalKey),
+            optimized: image.optimizedKey ? getPublicUrl(image.optimizedKey) : null,
+            thumbnail: image.thumbnailKey ? getPublicUrl(image.thumbnailKey) : null,
+            thumbnail150: image.thumbnailKey ? getPublicUrl(image.thumbnailKey.replace("_300.webp", "_150.webp")) : null,
+            thumbnail64: image.thumbnailKey ? getPublicUrl(image.thumbnailKey.replace("_300.webp", "_64.webp")) : null
+          }
+        }
+      });
     }
 
     const images = await prisma.image.findMany({
@@ -44,3 +80,4 @@ async function main(args) {
 }
 
 exports.main = main;
+

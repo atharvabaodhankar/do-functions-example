@@ -1,6 +1,6 @@
 const axios = require("axios");
 const sharp = require("sharp");
-const { send } = require("../lib/response");
+const { send } = require("./lib/response");
 
 async function main(args) {
   try {
@@ -30,3 +30,4 @@ async function main(args) {
 }
 
 exports.main = main;
+

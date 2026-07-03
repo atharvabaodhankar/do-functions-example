@@ -2,8 +2,8 @@ const axios = require("axios");
 const sharp = require("sharp");
 const { PutObjectCommand } = require("@aws-sdk/client-s3");
 const path = require("path");
-const { s3Client } = require("../lib/spaces");
-const { send } = require("../lib/response");
+const { s3Client } = require("./lib/spaces");
+const { send } = require("./lib/response");
 
 async function main(args) {
   try {
@@ -67,3 +67,4 @@ async function main(args) {
 }
 
 exports.main = main;
+

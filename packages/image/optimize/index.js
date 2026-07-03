@@ -2,9 +2,9 @@ const axios = require("axios");
 const sharp = require("sharp");
 const { PutObjectCommand } = require("@aws-sdk/client-s3");
 const path = require("path");
-const prisma = require("../lib/db/prisma");
-const { s3Client } = require("../lib/spaces");
-const { send } = require("../lib/response");
+const prisma = require("./lib/db/prisma");
+const { s3Client } = require("./lib/spaces");
+const { send } = require("./lib/response");
 
 function getPublicUrl(key) {
   const bucket = process.env.SPACES_BUCKET;
@@ -75,7 +75,7 @@ async function main(args) {
     // 6. Invoke Thumbnail Function
     const functionBaseUrl = process.env.FUNCTION_BASE_URL || `https://faas-blr1-8177d592.doserverless.co/api/v1/web/fn-f72bafd1-18fd-4e5b-9d68-721b5dc7cae6/image`;
     
-    const thumbnailRes = await axios.post(`${functionBaseUrl}/thumbnail`, {
+    const thumbnailRes = await axios.post(`${functionBaseUrl}/thumbnail.json`, {
       url: originalUrl
     });
 
@@ -144,3 +144,4 @@ async function main(args) {
 }
 
 exports.main = main;
+

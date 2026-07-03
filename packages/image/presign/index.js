@@ -1,9 +1,9 @@
 const { PutObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const { v4: uuidv4 } = require("uuid");
-const { s3Client } = require("../lib/spaces");
-const { getAuthUser } = require("../lib/jwt");
-const { send } = require("../lib/response");
+const { s3Client } = require("./lib/spaces");
+const { getAuthUser } = require("./lib/jwt");
+const { send } = require("./lib/response");
 
 async function main(args) {
   try {
@@ -41,3 +41,4 @@ async function main(args) {
 }
 
 exports.main = main;
+
