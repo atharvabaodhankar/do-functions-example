@@ -1,8 +1,11 @@
 const aws4 = require("aws4");
 const axios = require("axios");
-const prisma = require("./lib/db/prisma");
+const { Pool } = require("pg");
 const { getAuthUser } = require("./lib/jwt");
 const { send } = require("./lib/response");
+
+// Lightweight pg pool — no Prisma, no binary engines
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 async function uploadToSpaces(key, fileBuffer, mimeType) {
   const region = process.env.SPACES_REGION || "sgp1";
@@ -66,25 +69,23 @@ async function main(args) {
       }
     }
 
-    // 1. Create the image record in the database
-    const image = await prisma.image.create({
-      data: {
-        userId: user.id,
-        originalKey: key,
-        mimeType,
-        extension,
-        originalSize,
-        status: "UPLOADED",
-      },
-    });
+    // 1. Create the image record in the database (raw SQL — no Prisma)
+    const imageId = crypto.randomUUID();
+    const { rows: imageRows } = await pool.query(
+      `INSERT INTO "Image" (id, "userId", "originalKey", "mimeType", extension, "originalSize", status, "createdAt", "updatedAt")
+       VALUES ($1, $2, $3, $4, $5, $6, 'UPLOADED', NOW(), NOW())
+       RETURNING id`,
+      [imageId, user.id, key, mimeType, extension, Number(originalSize)]
+    );
+    const image = imageRows[0];
 
     // 2. Create the processing job record
-    const job = await prisma.processingJob.create({
-      data: {
-        imageId: image.id,
-        status: "PENDING",
-      },
-    });
+    const jobId = crypto.randomUUID();
+    await pool.query(
+      `INSERT INTO "ProcessingJob" (id, "imageId", status, "startedAt")
+       VALUES ($1, $2, 'PENDING', NOW())`,
+      [jobId, image.id]
+    );
 
     // 3. Invoke the optimize function asynchronously (fire-and-forget)
     const functionBaseUrl =
@@ -94,7 +95,7 @@ async function main(args) {
     axios
       .post(`${functionBaseUrl}/optimize.json`, {
         imageId: image.id,
-        jobId: job.id,
+        jobId,
       })
       .catch((err) => {
         console.error("Failed to trigger optimize function:", err.message);
@@ -106,6 +107,7 @@ async function main(args) {
       status: "PROCESSING",
     });
   } catch (error) {
+    console.error("image/complete error:", error);
     return send(500, { success: false, error: error.message || String(error) });
   }
 }

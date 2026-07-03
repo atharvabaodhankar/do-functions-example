@@ -3,15 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
-    "@prisma/client": "^5.16.1",
     "aws4": "^1.13.0",
     "axios": "^1.7.2",
-    "jsonwebtoken": "^9.0.2"
-  },
-  "devDependencies": {
-    "prisma": "^5.16.1"
-  },
-  "scripts": {
-    "postinstall": "prisma generate --schema=schema.prisma"
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.12.0"
   }
 }
