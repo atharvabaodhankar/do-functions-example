@@ -1,0 +1,14 @@
+{
+  "name": "image-complete",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "@prisma/client": "^5.16.1",
+    "axios": "^1.7.2",
+    "jsonwebtoken": "^9.0.2",
+    "prisma": "^5.16.1"
+  },
+  "scripts": {
+    "postinstall": "prisma generate --schema=../lib/db/schema.prisma"
+  }
+}
