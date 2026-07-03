@@ -1,0 +1,14 @@
+# Exclude everything that doesn't belong in a serverless function deploy
+frontend/
+frontend/node_modules/
+**/node_modules/
+**/__deployer__.zip
+**/.git/
+**/package-lock.json
+**/yarn.lock
+**/.env
+**/sample.png
+**/build_local.ps1
+**/deploy_serverless.ps1
+**/copy_lib.ps1
+**/backend/
