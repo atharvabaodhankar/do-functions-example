@@ -1,13 +1,39 @@
 parameters: {}
 environment: {}
 packages:
-    - name: sample
+    - name: image
       shared: false
-      environment: {}
+      environment:
+        SPACES_KEY: "${SPACES_KEY}"
+        SPACES_SECRET: "${SPACES_SECRET}"
+        SPACES_BUCKET: "atharva-cloudlab"
+        SPACES_REGION: "sgp1"
       parameters: {}
       annotations: {}
       functions:
-        - name: hello
+        - name: health
+          binary: false
+          main: ""
+          runtime: nodejs:22
+          web: true
+          webSecure: false
+          parameters: {}
+          environment: {}
+          annotations: {}
+          limits: {}
+        - name: metadata
+          binary: false
+          main: ""
+          runtime: nodejs:22
+          web: true
+          webSecure: false
+          parameters: {}
+          environment: {}
+          annotations: {}
+          limits:
+            memory: 512
+            timeout: 30000
+        - name: optimize
           binary: false
           main: ""
           runtime: nodejs:22
