@@ -130,3 +130,23 @@ packages:
           environment: {}
           annotations: {}
           limits: {}
+
+    - name: user
+      shared: false
+      environment:
+        DATABASE_URL: "${DATABASE_URL}"
+        JWT_SECRET: "${JWT_SECRET}"
+      parameters: {}
+      annotations: {}
+      functions:
+        - name: profile
+          binary: false
+          main: ""
+          runtime: nodejs:22
+          web: true
+          webSecure: false
+          parameters: {}
+          environment: {}
+          annotations: {}
+          limits: {}
+

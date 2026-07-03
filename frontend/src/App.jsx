@@ -47,7 +47,7 @@ function App() {
 
   const fetchUser = async () => {
     try {
-      const res = await fetch(`${API_BASE}/user/profile`, {
+      const res = await fetch(`${API_BASE}/user/profile.json`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -64,7 +64,7 @@ function App() {
   const fetchImages = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/image/list`, {
+      const res = await fetch(`${API_BASE}/image/list.json`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -87,7 +87,7 @@ function App() {
   const handleAuth = async (e) => {
     e.preventDefault();
     setAuthError("");
-    const endpoint = authMode === "login" ? "/auth/login" : "/auth/register";
+    const endpoint = authMode === "login" ? "/auth/login.json" : "/auth/register.json";
     try {
       const res = await fetch(`${API_BASE}${endpoint}`, {
         method: "POST",
@@ -115,7 +115,7 @@ function App() {
 
     try {
       // 1. Get presigned URL
-      const presignRes = await fetch(`${API_BASE}/image/presign`, {
+      const presignRes = await fetch(`${API_BASE}/image/presign.json`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -131,32 +131,52 @@ function App() {
 
       const { uploadUrl, key } = presignData;
 
-      // 2. PUT directly to Spaces
+      // 2. PUT directly to Spaces with CORS fallback
       setUploadProgress("Uploading image directly to cloud storage...");
-      const s3Res = await fetch(uploadUrl, {
-        method: "PUT",
-        headers: {
-          "Content-Type": file.type
-        },
-        body: file
-      });
+      let directUploadSuccess = false;
+      try {
+        const s3Res = await fetch(uploadUrl, {
+          method: "PUT",
+          headers: {
+            "Content-Type": file.type
+          },
+          body: file
+        });
+        if (s3Res.ok) {
+          directUploadSuccess = true;
+        }
+      } catch (corsErr) {
+        console.warn("Direct upload blocked by CORS or network error, falling back to server-side proxy upload:", corsErr);
+      }
 
-      if (!s3Res.ok) throw new Error("Cloud upload failed");
+      let completeBody = {
+        key,
+        originalSize: file.size,
+        mimeType: file.type,
+        extension: file.name.split(".").pop()
+      };
+
+      if (!directUploadSuccess) {
+        setUploadProgress("CORS detected. Uploading securely through serverless proxy...");
+        // Convert file to base64
+        const base64Data = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result.split(",")[1]);
+          reader.onerror = (e) => reject(e);
+          reader.readAsDataURL(file);
+        });
+        completeBody.fileData = base64Data;
+      }
 
       // 3. Trigger completion and start background processing
       setUploadProgress("Starting optimization pipelines...");
-      const completeRes = await fetch(`${API_BASE}/image/complete`, {
+      const completeRes = await fetch(`${API_BASE}/image/complete.json`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({
-          key,
-          originalSize: file.size,
-          mimeType: file.type,
-          extension: file.name.split(".").pop()
-        })
+        body: JSON.stringify(completeBody)
       });
 
       const completeData = await completeRes.json();
@@ -179,7 +199,7 @@ function App() {
   const pollImageStatus = async (imageId) => {
     const interval = setInterval(async () => {
       try {
-        const res = await fetch(`${API_BASE}/image/list?id=${imageId}`, {
+        const res = await fetch(`${API_BASE}/image/list.json?id=${imageId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();
@@ -204,7 +224,7 @@ function App() {
     if (e) e.stopPropagation();
     if (!confirm("Are you sure you want to delete this image and all optimized variants?")) return;
     try {
-      const res = await fetch(`${API_BASE}/image/delete?id=${id}`, {
+      const res = await fetch(`${API_BASE}/image/delete.json?id=${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       });

@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
-const prisma = require("../lib/db/prisma");
-const { signToken } = require("../lib/jwt");
-const { send } = require("../lib/response");
+const prisma = require("./lib/db/prisma");
+const { signToken } = require("./lib/jwt");
+const { send } = require("./lib/response");
 
 async function main(args) {
   try {
@@ -34,3 +34,4 @@ async function main(args) {
 }
 
 exports.main = main;
+
