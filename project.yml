@@ -1,13 +1,46 @@
 parameters: {}
 environment: {}
 packages:
+    - name: auth
+      shared: false
+      environment:
+        DATABASE_URL: "${DATABASE_URL}"
+        JWT_SECRET: "${JWT_SECRET}"
+      parameters: {}
+      annotations: {}
+      functions:
+        - name: register
+          binary: false
+          main: ""
+          runtime: nodejs:22
+          web: true
+          webSecure: false
+          parameters: {}
+          environment: {}
+          annotations: {}
+          limits: {}
+        - name: login
+          binary: false
+          main: ""
+          runtime: nodejs:22
+          web: true
+          webSecure: false
+          parameters: {}
+          environment: {}
+          annotations: {}
+          limits: {}
+
     - name: image
       shared: false
       environment:
+        DATABASE_URL: "${DATABASE_URL}"
+        JWT_SECRET: "${JWT_SECRET}"
+        SPACES_ENDPOINT: "${SPACES_ENDPOINT}"
+        SPACES_REGION: "${SPACES_REGION}"
+        SPACES_BUCKET: "${SPACES_BUCKET}"
         SPACES_KEY: "${SPACES_KEY}"
         SPACES_SECRET: "${SPACES_SECRET}"
-        SPACES_BUCKET: "atharva-cloudlab"
-        SPACES_REGION: "sgp1"
+        FUNCTION_BASE_URL: "https://faas-blr1-8177d592.doserverless.co/api/v1/web/fn-f72bafd1-18fd-4e5b-9d68-721b5dc7cae6/image"
       parameters: {}
       annotations: {}
       functions:
@@ -21,7 +54,27 @@ packages:
           environment: {}
           annotations: {}
           limits: {}
-        - name: metadata
+        - name: presign
+          binary: false
+          main: ""
+          runtime: nodejs:22
+          web: true
+          webSecure: false
+          parameters: {}
+          environment: {}
+          annotations: {}
+          limits: {}
+        - name: complete
+          binary: false
+          main: ""
+          runtime: nodejs:22
+          web: true
+          webSecure: false
+          parameters: {}
+          environment: {}
+          annotations: {}
+          limits: {}
+        - name: optimize
           binary: false
           main: ""
           runtime: nodejs:22
@@ -33,7 +86,7 @@ packages:
           limits:
             memory: 512
             timeout: 30000
-        - name: optimize
+        - name: metadata
           binary: false
           main: ""
           runtime: nodejs:22
@@ -57,4 +110,23 @@ packages:
           limits:
             memory: 512
             timeout: 30000
-
+        - name: list
+          binary: false
+          main: ""
+          runtime: nodejs:22
+          web: true
+          webSecure: false
+          parameters: {}
+          environment: {}
+          annotations: {}
+          limits: {}
+        - name: delete
+          binary: false
+          main: ""
+          runtime: nodejs:22
+          web: true
+          webSecure: false
+          parameters: {}
+          environment: {}
+          annotations: {}
+          limits: {}

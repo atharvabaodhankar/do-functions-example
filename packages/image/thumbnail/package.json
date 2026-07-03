@@ -1,10 +1,10 @@
 {
-  "name": "thumbnail",
+  "name": "image-thumbnail",
   "version": "1.0.0",
-  "main": "thumbnail.js",
+  "main": "index.js",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.600.0",
-    "axios": "^1.7.0",
+    "axios": "^1.7.2",
     "sharp": "^0.35.3"
   }
 }

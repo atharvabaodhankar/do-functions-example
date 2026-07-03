@@ -1,9 +1,9 @@
 {
-  "name": "metadata",
+  "name": "image-metadata",
   "version": "1.0.0",
-  "main": "metadata.js",
+  "main": "index.js",
   "dependencies": {
-    "axios": "^1.7.0",
+    "axios": "^1.7.2",
     "sharp": "^0.35.3"
   }
 }

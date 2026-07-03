@@ -1,13 +1,11 @@
 {
-  "name": "image-optimize",
+  "name": "image-list",
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.600.0",
     "@prisma/client": "^5.16.1",
-    "axios": "^1.7.2",
-    "prisma": "^5.16.1",
-    "sharp": "^0.35.3"
+    "jsonwebtoken": "^9.0.2",
+    "prisma": "^5.16.1"
   },
   "scripts": {
     "postinstall": "prisma generate --schema=../lib/db/schema.prisma"
