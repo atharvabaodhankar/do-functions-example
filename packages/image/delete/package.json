@@ -1,0 +1,14 @@
+{
+  "name": "image-delete",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.600.0",
+    "@prisma/client": "^5.16.1",
+    "jsonwebtoken": "^9.0.2",
+    "prisma": "^5.16.1"
+  },
+  "scripts": {
+    "postinstall": "prisma generate --schema=../lib/db/schema.prisma"
+  }
+}
