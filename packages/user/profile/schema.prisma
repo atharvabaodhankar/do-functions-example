@@ -5,7 +5,7 @@ datasource db {
 
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["linux-musl-openssl-3.0.x"]
+  binaryTargets = ["debian-openssl-3.0.x"]
 }
 
 model User {
@@ -62,3 +62,4 @@ enum JobStatus {
   COMPLETED
   FAILED
 }
+
