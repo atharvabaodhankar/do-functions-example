@@ -1,6 +1,6 @@
 const axios = require("axios");
 const sharp = require("sharp");
-const { PutObjectCommand } = require("@aws-sdk/client-s3");
+const { PutObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3");
 const path = require("path");
 const prisma = require("./lib/db/prisma");
 const { s3Client } = require("./lib/spaces");
@@ -37,9 +37,21 @@ async function main(args) {
 
     const originalUrl = getPublicUrl(image.originalKey);
 
-    // 3. Download image buffer
-    const downloadRes = await axios.get(originalUrl, { responseType: "arraybuffer" });
-    const buffer = Buffer.from(downloadRes.data);
+    // 3. Download image buffer directly from Spaces
+    const getObjectRes = await s3Client.send(new GetObjectCommand({
+      Bucket: process.env.SPACES_BUCKET,
+      Key: image.originalKey
+    }));
+
+    const streamToBuffer = (stream) =>
+      new Promise((resolve, reject) => {
+        const chunks = [];
+        stream.on("data", (chunk) => chunks.push(chunk));
+        stream.on("error", reject);
+        stream.on("end", () => resolve(Buffer.concat(chunks)));
+      });
+
+    const buffer = await streamToBuffer(getObjectRes.Body);
 
     // 4. Extract metadata & resize using Sharp
     const metadata = await sharp(buffer).metadata();
@@ -76,14 +88,22 @@ async function main(args) {
     const functionBaseUrl = process.env.FUNCTION_BASE_URL || `https://faas-blr1-8177d592.doserverless.co/api/v1/web/fn-f72bafd1-18fd-4e5b-9d68-721b5dc7cae6/image`;
     
     const thumbnailRes = await axios.post(`${functionBaseUrl}/thumbnail.json`, {
+      key: image.originalKey,
       url: originalUrl
     });
 
-    if (!thumbnailRes.data || !thumbnailRes.data.success) {
-      throw new Error(`Thumbnail generation failed: ${thumbnailRes.data?.error || "Unknown error"}`);
+    console.log("Thumbnail Function Response Data:", JSON.stringify(thumbnailRes.data));
+
+    let responseData = thumbnailRes.data;
+    if (responseData && responseData.body && typeof responseData.body === "object") {
+      responseData = responseData.body;
     }
 
-    const thumbnail300Url = thumbnailRes.data.thumbnails["300"];
+    if (!responseData || !responseData.success) {
+      throw new Error(`Thumbnail generation failed: ${responseData?.error || "Unknown error"}`);
+    }
+
+    const thumbnail300Url = responseData.thumbnails["300"];
     const thumbnailKey = thumbnail300Url.replace(
       `https://${process.env.SPACES_BUCKET}.${process.env.SPACES_REGION}.digitaloceanspaces.com/`,
       ""
@@ -122,6 +142,12 @@ async function main(args) {
     });
 
   } catch (error) {
+    if (error.response) {
+      console.error("Axios Error Response Data:", JSON.stringify(error.response.data));
+      console.error("Axios Error Status:", error.response.status);
+    } else {
+      console.error("Error stack:", error.stack || error);
+    }
     console.error(`Error in optimize function for image ${imageId}:`, error.message || error);
 
     // Update job and image status to FAILED
