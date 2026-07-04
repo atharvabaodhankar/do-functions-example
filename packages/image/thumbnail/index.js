@@ -1,24 +1,43 @@
 const axios = require("axios");
 const sharp = require("sharp");
-const { PutObjectCommand } = require("@aws-sdk/client-s3");
+const { PutObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3");
 const path = require("path");
 const { s3Client } = require("./lib/spaces");
 const { send } = require("./lib/response");
 
 async function main(args) {
   try {
+    const key = args.key;
     const imageUrl = args.url;
 
-    if (!imageUrl) {
-      return send(400, { success: false, error: "Missing 'url' parameter" });
+    let originalBuffer;
+
+    if (key) {
+      const getObjectRes = await s3Client.send(new GetObjectCommand({
+        Bucket: process.env.SPACES_BUCKET,
+        Key: key
+      }));
+
+      const streamToBuffer = (stream) =>
+        new Promise((resolve, reject) => {
+          const chunks = [];
+          stream.on("data", (chunk) => chunks.push(chunk));
+          stream.on("error", reject);
+          stream.on("end", () => resolve(Buffer.concat(chunks)));
+        });
+
+      originalBuffer = await streamToBuffer(getObjectRes.Body);
+    } else if (imageUrl) {
+      const response = await axios.get(imageUrl, { responseType: "arraybuffer" });
+      originalBuffer = Buffer.from(response.data);
+    } else {
+      return send(400, { success: false, error: "Missing 'key' or 'url' parameter" });
     }
 
-    const response = await axios.get(imageUrl, { responseType: "arraybuffer" });
-    const originalBuffer = Buffer.from(response.data);
-
+    const pathSource = key ? key : (imageUrl ? new URL(imageUrl).pathname : "image");
     const originalFilename = path.basename(
-      new URL(imageUrl).pathname,
-      path.extname(new URL(imageUrl).pathname)
+      pathSource,
+      path.extname(pathSource)
     );
 
     const bucket = process.env.SPACES_BUCKET;
