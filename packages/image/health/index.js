@@ -1,4 +1,4 @@
-const { send } = require("../lib/response");
+const { send } = require("./lib/response");
 
 async function main() {
   return send(200, {
@@ -10,3 +10,5 @@ async function main() {
 }
 
 exports.main = main;
+
+

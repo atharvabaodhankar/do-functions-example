@@ -1,6 +1,7 @@
 $actions = @(
     "packages/auth/register",
     "packages/auth/login",
+    "packages/image/health",
     "packages/image/presign",
     "packages/image/complete",
     "packages/image/optimize",
@@ -18,6 +19,9 @@ foreach ($action in $actions) {
     $destLib = "$action/lib"
     
     if (Test-Path $srcLib) {
+        if (Test-Path $destLib) {
+            Remove-Item -Path $destLib -Recurse -Force
+        }
         Write-Host "Copying $srcLib to $destLib..."
         # Copy the lib directory recursively
         Copy-Item -Path $srcLib -Destination $destLib -Recurse -Force

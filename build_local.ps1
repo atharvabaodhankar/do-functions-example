@@ -1,6 +1,7 @@
 $actions = @(
     "packages/auth/register",
     "packages/auth/login",
+    "packages/image/health",
     "packages/image/presign",
     "packages/image/complete",
     "packages/image/optimize",
