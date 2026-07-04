@@ -18,6 +18,14 @@ import {
 
 const API_BASE = "https://faas-blr1-8177d592.doserverless.co/api/v1/web/fn-f72bafd1-18fd-4e5b-9d68-721b5dc7cae6";
 
+const parseResponse = async (res) => {
+  const data = await res.json();
+  if (data && data.body && typeof data.body === "object") {
+    return data.body;
+  }
+  return data;
+};
+
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [user, setUser] = useState(null);
@@ -50,7 +58,7 @@ function App() {
       const res = await fetch(`${API_BASE}/user/profile.json`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      const data = await res.json();
+      const data = await parseResponse(res);
       if (data.success) {
         setUser(data.user);
       } else {
@@ -67,7 +75,7 @@ function App() {
       const res = await fetch(`${API_BASE}/image/list.json`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      const data = await res.json();
+      const data = await parseResponse(res);
       if (data.success) {
         setImages(data.images);
       }
@@ -94,7 +102,7 @@ function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(authForm)
       });
-      const data = await res.json();
+      const data = await parseResponse(res);
       if (data.success) {
         setToken(data.token);
       } else {
@@ -126,7 +134,7 @@ function App() {
           contentType: file.type
         })
       });
-      const presignData = await presignRes.json();
+      const presignData = await parseResponse(presignRes);
       if (!presignData.success) throw new Error(presignData.error);
 
       const { uploadUrl, key } = presignData;
@@ -179,7 +187,7 @@ function App() {
         body: JSON.stringify(completeBody)
       });
 
-      const completeData = await completeRes.json();
+      const completeData = await parseResponse(completeRes);
       if (!completeData.success) throw new Error(completeData.error);
 
       // Refresh images lists
@@ -202,7 +210,7 @@ function App() {
         const res = await fetch(`${API_BASE}/image/list.json?id=${imageId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        const data = await res.json();
+        const data = await parseResponse(res);
         if (data.success) {
           const status = data.image.status;
           if (status === "READY" || status === "FAILED") {
@@ -228,7 +236,7 @@ function App() {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       });
-      const data = await res.json();
+      const data = await parseResponse(res);
       if (data.success) {
         setImages(images.filter((img) => img.id !== id));
         if (selectedImage && selectedImage.id === id) {
@@ -439,7 +447,7 @@ function App() {
                       const res = await fetch(`${API_BASE}/image/list?id=${img.id}`, {
                         headers: { Authorization: `Bearer ${token}` }
                       });
-                      const data = await res.json();
+                      const data = await parseResponse(res);
                       if (data.success) setSelectedImage(data.image);
                     } catch (e) {
                       alert("Error loading details");
