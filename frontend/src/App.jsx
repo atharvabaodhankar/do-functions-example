@@ -146,7 +146,8 @@ function App() {
         const s3Res = await fetch(uploadUrl, {
           method: "PUT",
           headers: {
-            "Content-Type": file.type
+            "Content-Type": file.type,
+            "x-amz-acl": "public-read"
           },
           body: file
         });
