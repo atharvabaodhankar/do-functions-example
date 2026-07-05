@@ -262,3 +262,58 @@ h1, h2, h3, h4, h5, h6 {
 .spin-slow {
   animation: spin-slow 2s linear infinite;
 }
+
+/* Responsive Header layout */
+.header-flex {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  text-align: center;
+}
+
+@media (min-width: 600px) {
+  .header-flex {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+  }
+}
+
+/* Responsive Variant rows inside detail modal */
+.variant-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.variant-info {
+  word-break: break-all;
+}
+
+.variant-info p:last-child {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.variant-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+@media (min-width: 600px) {
+  .variant-row {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .variant-info p:last-child {
+    max-width: 450px;
+  }
+}
+

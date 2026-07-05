@@ -355,7 +355,7 @@ function App() {
   return (
     <div className="container">
       {/* Header */}
-      <header className="glass-card" style={{ padding: "20px 24px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "40px" }}>
+      <header className="glass-card header-flex" style={{ padding: "20px 24px", marginBottom: "40px" }}>
         <div className="tack-pin" />
         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
           <div style={{ border: "2.5px solid #2d2d2d", width: "42px", height: "42px", borderRadius: "6px 12px 4px 10px / 10px 4px 12px 6px", display: "flex", justifyContent: "center", alignItems: "center", color: "#2d2d2d", background: "#fff9c4", transform: "rotate(-2deg)" }}>
@@ -583,24 +583,24 @@ function App() {
             <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               <h4 style={{ margin: "0", fontSize: "20px" }}>Deliverable Variants</h4>
               
-              <div className="glass-card" style={{ padding: "14px 18px", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "2px 2px 0px #2d2d2d" }}>
-                <div>
+              <div className="glass-card variant-row" style={{ padding: "14px 18px", boxShadow: "2px 2px 0px #2d2d2d" }}>
+                <div className="variant-info">
                   <p style={{ margin: "0", fontSize: "16px", fontWeight: "700" }}>Optimized Image (WebP)</p>
-                  <p style={{ margin: "2px 0 0 0", fontSize: "14px", color: "#6b7280", maxWidth: "450px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{selectedImage.urls.optimized}</p>
+                  <p style={{ margin: "2px 0 0 0", fontSize: "14px", color: "#6b7280" }}>{selectedImage.urls.optimized}</p>
                 </div>
-                <div style={{ display: "flex", gap: "8px" }}>
+                <div className="variant-actions">
                   <button onClick={() => copyToClipboard(selectedImage.urls.optimized)} className="btn-secondary" style={{ padding: "6px 10px" }}><Copy size={16} strokeWidth={2.5} /></button>
                   <a href={selectedImage.urls.optimized} target="_blank" rel="noreferrer" className="btn-primary" style={{ padding: "6px 10px" }}><ExternalLink size={16} strokeWidth={2.5} /></a>
                 </div>
               </div>
 
               {selectedImage.urls.thumbnail && (
-                <div className="glass-card" style={{ padding: "14px 18px", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "2px 2px 0px #2d2d2d" }}>
-                  <div>
+                <div className="glass-card variant-row" style={{ padding: "14px 18px", boxShadow: "2px 2px 0px #2d2d2d" }}>
+                  <div className="variant-info">
                     <p style={{ margin: "0", fontSize: "16px", fontWeight: "700" }}>Medium Thumbnail (300px)</p>
-                    <p style={{ margin: "2px 0 0 0", fontSize: "14px", color: "#6b7280", maxWidth: "450px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{selectedImage.urls.thumbnail}</p>
+                    <p style={{ margin: "2px 0 0 0", fontSize: "14px", color: "#6b7280" }}>{selectedImage.urls.thumbnail}</p>
                   </div>
-                  <div style={{ display: "flex", gap: "8px" }}>
+                  <div className="variant-actions">
                     <button onClick={() => copyToClipboard(selectedImage.urls.thumbnail)} className="btn-secondary" style={{ padding: "6px 10px" }}><Copy size={16} strokeWidth={2.5} /></button>
                     <a href={selectedImage.urls.thumbnail} target="_blank" rel="noreferrer" className="btn-primary" style={{ padding: "6px 10px" }}><ExternalLink size={16} strokeWidth={2.5} /></a>
                   </div>
@@ -608,12 +608,12 @@ function App() {
               )}
 
               {selectedImage.urls.thumbnail150 && (
-                <div className="glass-card" style={{ padding: "14px 18px", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "2px 2px 0px #2d2d2d" }}>
-                  <div>
+                <div className="glass-card variant-row" style={{ padding: "14px 18px", boxShadow: "2px 2px 0px #2d2d2d" }}>
+                  <div className="variant-info">
                     <p style={{ margin: "0", fontSize: "16px", fontWeight: "700" }}>Small Thumbnail (150px)</p>
-                    <p style={{ margin: "2px 0 0 0", fontSize: "14px", color: "#6b7280", maxWidth: "450px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{selectedImage.urls.thumbnail150}</p>
+                    <p style={{ margin: "2px 0 0 0", fontSize: "14px", color: "#6b7280" }}>{selectedImage.urls.thumbnail150}</p>
                   </div>
-                  <div style={{ display: "flex", gap: "8px" }}>
+                  <div className="variant-actions">
                     <button onClick={() => copyToClipboard(selectedImage.urls.thumbnail150)} className="btn-secondary" style={{ padding: "6px 10px" }}><Copy size={16} strokeWidth={2.5} /></button>
                     <a href={selectedImage.urls.thumbnail150} target="_blank" rel="noreferrer" className="btn-primary" style={{ padding: "6px 10px" }}><ExternalLink size={16} strokeWidth={2.5} /></a>
                   </div>
@@ -621,12 +621,12 @@ function App() {
               )}
 
               {selectedImage.urls.thumbnail64 && (
-                <div className="glass-card" style={{ padding: "14px 18px", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "2px 2px 0px #2d2d2d" }}>
-                  <div>
+                <div className="glass-card variant-row" style={{ padding: "14px 18px", boxShadow: "2px 2px 0px #2d2d2d" }}>
+                  <div className="variant-info">
                     <p style={{ margin: "0", fontSize: "16px", fontWeight: "700" }}>Avatar Thumbnail (64px)</p>
-                    <p style={{ margin: "2px 0 0 0", fontSize: "14px", color: "#6b7280", maxWidth: "450px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{selectedImage.urls.thumbnail64}</p>
+                    <p style={{ margin: "2px 0 0 0", fontSize: "14px", color: "#6b7280" }}>{selectedImage.urls.thumbnail64}</p>
                   </div>
-                  <div style={{ display: "flex", gap: "8px" }}>
+                  <div className="variant-actions">
                     <button onClick={() => copyToClipboard(selectedImage.urls.thumbnail64)} className="btn-secondary" style={{ padding: "6px 10px" }}><Copy size={16} strokeWidth={2.5} /></button>
                     <a href={selectedImage.urls.thumbnail64} target="_blank" rel="noreferrer" className="btn-primary" style={{ padding: "6px 10px" }}><ExternalLink size={16} strokeWidth={2.5} /></a>
                   </div>
