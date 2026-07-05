@@ -444,7 +444,7 @@ function App() {
                   onClick={async () => {
                     // Fetch full detail when clicked
                     try {
-                      const res = await fetch(`${API_BASE}/image/list?id=${img.id}`, {
+                      const res = await fetch(`${API_BASE}/image/list.json?id=${img.id}`, {
                         headers: { Authorization: `Bearer ${token}` }
                       });
                       const data = await parseResponse(res);
