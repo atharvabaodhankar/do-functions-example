@@ -270,8 +270,8 @@ function App() {
           <div className="tape-strip" />
 
           <div style={{ textAlign: "center", marginBottom: "32px" }}>
-            <div style={{ border: "3px solid #2d2d2d", width: "56px", height: "56px", borderRadius: "12px 3px 15px 4px / 4px 15px 3px 12px", display: "inline-flex", justifyContent: "center", alignItems: "center", color: "#2d2d2d", background: "#fff9c4", marginBottom: "16px", transform: "rotate(-2deg)", boxShadow: "2px 2px 0px #2d2d2d" }}>
-              <ImageIcon size={32} strokeWidth={2.5} />
+            <div style={{ border: "3px solid #2d2d2d", width: "72px", height: "72px", borderRadius: "12px 3px 15px 4px / 4px 15px 3px 12px", display: "inline-flex", justifyContent: "center", alignItems: "center", background: "#fff9c4", marginBottom: "16px", transform: "rotate(-2deg)", boxShadow: "2px 2px 0px #2d2d2d", overflow: "hidden" }}>
+              <img src="/logo.png" alt="Cloud Logo" style={{ width: "80%", height: "80%", objectFit: "contain" }} />
             </div>
             <h2 style={{ margin: "0 0 8px 0", fontSize: "32px", fontWeight: "700" }}>Cloud Image Optimizer</h2>
             <p style={{ margin: "0", color: "#6b7280", fontSize: "18px", fontStyle: "italic" }}>Serverless image processing pipeline</p>
@@ -359,8 +359,8 @@ function App() {
       <header className="glass-card header-flex" style={{ padding: "20px 24px", marginBottom: "40px" }}>
         <div className="tack-pin" />
         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-          <div style={{ border: "2.5px solid #2d2d2d", width: "42px", height: "42px", borderRadius: "6px 12px 4px 10px / 10px 4px 12px 6px", display: "flex", justifyContent: "center", alignItems: "center", color: "#2d2d2d", background: "#fff9c4", transform: "rotate(-2deg)" }}>
-            <ImageIcon size={22} strokeWidth={2.5} />
+          <div style={{ border: "2.5px solid #2d2d2d", width: "48px", height: "48px", borderRadius: "6px 12px 4px 10px / 10px 4px 12px 6px", display: "flex", justifyContent: "center", alignItems: "center", background: "#fff9c4", transform: "rotate(-2deg)", overflow: "hidden" }}>
+            <img src="/logo.png" alt="Cloud Logo" style={{ width: "85%", height: "85%", objectFit: "contain" }} />
           </div>
           <div>
             <h1 style={{ margin: "0", fontSize: "24px", fontWeight: "700" }}>Cloud Image Optimizer</h1>
